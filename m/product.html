@@ -22,8 +22,19 @@
     </header>
     <div class="cz_container ">
         <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <div class="cz_banner mui-slider">
+            <div class="mui-scroll" id="mui-sc">
+               
+            </div>
+        </div>
+    </div>
+</div>
+<div class="p_option">
+    <a href="#" class="btn_cart fa fa-shopping-cart"></a>
+    <a href="#" class="btn_addCart">加入购物车</a>
+    <a href="#" class="btn_pay">立即购买</a>
+</div>
+<script type="text/html" id="tpl">
+     <div class="cz_banner mui-slider">
                     <div class="mui-slider-group mui-slider-loop">
                         <div class="mui-slider-item mui-slider-item-duplicate">
                             <a href="#"><img src="images/product.jpg"></a>
@@ -44,13 +55,13 @@
                     </div>
                 </div>
                 <div class="p_title">
-                    Nike耐克 男式 NIKE AIR MAX 1 PND QS复刻休闲鞋
+                    {{proName}}
                 </div>
                 <div class="p_price">
-                    <span class="fold"><span>5.9</span>折</span>
+                    <span class="fold"><span>{{dis}}</span>折</span>
                     价格：<strong class="present">¥
-                    712.00</strong>
-                    <del class="original">¥1199.0</del>
+                    {{price}}</strong>
+                    <del class="original">¥{{oldPrice}}</del>
                 </div>
                 <div class="p_size">
                     尺码：
@@ -75,24 +86,36 @@
                     <img data-lazyload="images/detail.jpg"  alt=""/>
                     <img data-lazyload="images/detail.jpg"  alt=""/>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="p_option">
-    <a href="#" class="btn_cart fa fa-shopping-cart"></a>
-    <a href="#" class="btn_addCart">加入购物车</a>
-    <a href="#" class="btn_pay">立即购买</a>
-</div>
+</script>
+<script src="js/template-web.js"></script>
+<script src="js/jquery.min.js"></script>
 <script src="res/mui/js/mui.min.js"></script>
 <script src="res/mui/js/mui.lazyload.js"></script>
 <script src="res/mui/js/mui.lazyload.img.js"></script>
 <script>
-    mui(function(){
-        mui('.mui-slider').slider({
+    var search=location.search.slice(1)
+    var arr=search.split('&')
+    var o={}
+    for(var i=0;i<arr.length;i++){
+        var tmp=arr[i].split('=')
+        o[tmp[0]]=tmp[1]
+    }
+    // console.log(o)
+    $.ajax({
+        url:"/api/product/queryProductDetail",
+        type:"get",
+        data:{
+            id:o.pid
+        },
+        success:function(info){
+            console.log(info)
+            info.dis=(info.price/info.oldPrice *10).toFixed(1)
+            var html=template('tpl',info)
+            $('#mui-sc').html(html)
+             mui('.mui-slider').slider({
             interval:3000 //自动轮播周期，若为0则不自动播放，默认为0；
-        });
-        mui('.mui-scroll-wrapper').scroll({
+            });
+            mui('.mui-scroll-wrapper').scroll({
             scrollY: true, //是否竖向滚动
             scrollX: false, //是否横向滚动
             startX: 0, //初始化时滚动至x
@@ -100,22 +123,13 @@
             indicators: false, //是否显示滚动条
             deceleration:0.0006, //阻尼系数,系数越小滑动越灵敏
             bounce: true, //是否启用回弹
-        });
-        mui.init({
-            pullRefresh: {
-                container: '.mui-scroll-wrapper',
-                down: {
-                    callback: function(){
-                        setTimeout(function(){
-                            mui('.mui-scroll-wrapper').pullRefresh().endPulldownToRefresh(); //refresh completed
-                        },1000);
-                    }
-                }
-            }
-        });
-        mui('.p_detail').imageLazyload({
-            placeholder: '../images/user.jpg'
-        });
+             });
+       
+        }
+    })
+    mui(function(){
+       
+      
     });
 </script>
 
