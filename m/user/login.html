@@ -45,6 +45,10 @@
 <script src="../res/mui/js/mui.min.js"></script>
 </body>
 <script>
+     var search=location.search.slice(1)
+    var reg=/url=(.+)/
+    var match=reg.exec(search)
+    var url=match&&match[1]
     $('.btn_login').on('click',function(){
         $.ajax({
             url:"/api/user/login",
@@ -55,6 +59,7 @@
             },
             success:function(json){
                 if(json.success){
+                    if(url) return location.href=url;
                     location.href='./index.html' 
                 }
             }
